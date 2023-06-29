@@ -1,0 +1,11 @@
+# Ignore venvs
+venv
+
+# Ignore backup files
+*.bak
+
+# Ignore genrated files
+clab*
+
+# Ignore  python compiled files
+*.pyc

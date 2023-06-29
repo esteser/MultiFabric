@@ -1,0 +1,43 @@
+---
+- name: BGP EVPN multi-vendor VXLAN deployment
+  hosts: 'leaf1'
+  tasks:
+    - name: Generate mlag config
+      debug:
+        msg: "{{ lookup('template', 'templates/{{ platform }}/mlag.j2') }}"
+
+    - name: Generate mlag bgp config
+      debug:
+        msg: "{{ lookup('template', 'templates/{{ platform }}/bgp_mlag.j2') }}"
+
+    - name: route-maps
+      debug:
+        msg: "{{ lookup('template', 'templates/{{ platform }}/route_map.j2') }}"
+
+    - name: interfaces
+      debug:
+        msg: "{{ lookup('template', 'templates/{{ platform }}/underlay_interfaces.j2') }}"
+
+    - name: BGP
+      debug:
+        msg: "{{ lookup('template', 'templates/{{ platform }}/bgp_{{ role }}.j2') }}"
+
+    - name: leaf VLANs
+      debug:
+        msg: "{{ lookup('template', 'templates/{{ platform }}/vlans_create.j2') }}"
+      when: inventory_hostname in groups['leafs']
+
+    - name: Map leaf interfaces to VLANs
+      debug:
+        msg: "{{ lookup('template', 'templates/{{ platform }}/access_interfaces_to_vlan_mapping.j2') }}"
+      when: inventory_hostname in groups['leafs']
+
+    - name: Adding leaf VLANs/VNIs to BGP
+      debug:
+        msg: "{{ lookup('template', 'templates/{{ platform }}/bgp_evpn_vlan_vni_addition.j2') }}"
+      when: inventory_hostname in groups['leafs']
+
+    - name: Add leaf VLANs to VNIs mapping to VXLAN interface
+      debug:
+        msg: "{{ lookup('template', 'templates/{{ platform }}/vxlan_interface_map_vni.j2') }}"
+      when: inventory_hostname in groups['leafs']

@@ -1,0 +1,31 @@
+feature lacp
+feature vpc
+!
+vrf context VPC_KEEPALIVE
+!
+vpc domain 1
+  peer-switch
+  peer-keepalive destination {{ inventory_hostname_short | mlag_address('remote', 'mlag') }} source {{ inventory_hostname_short | mlag_address('local', 'mlag') }} vrf VPC_KEEPALIVE
+  auto-recovery
+!
+interface Ethernet1/18
+  description mlag_keepalive
+  vrf member VPC_KEEPALIVE
+  ip address {{ inventory_hostname_short | mlag_address('local', 'mlag') }}/31
+  no shutdown
+!
+interface Ethernet1/19
+  description mlag_peer_1
+  channel-group 1 mode active
+!
+interface Ethernet1/20
+  description mlag_peer_1
+  channel-group 1 mode active
+!
+interface Port-Channel1
+  description mlag_peer
+  switchport
+  switchport mode trunk
+  spanning-tree port type network
+  vpc peer-link
+!

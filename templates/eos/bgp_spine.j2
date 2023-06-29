@@ -1,0 +1,26 @@
+ip routing
+ip routing ipv6 interfaces
+service routing protocols model multi-agent
+ipv6 unicast-routing
+!
+peer-filter leaf-asn-range
+   10 match as-range {{ bgp.as_number | bgp_asn + 1 }}-{{ bgp.as_number | bgp_asn + 500 }} result accept
+!
+router bgp {{ bgp.as_number }}
+   bgp asn notation asdot
+   router-id {{ bgp.router_id }}
+   no bgp default ipv4-unicast
+   bgp listen range 10.10.0.0/20 peer-group underlay peer-filter leaf-asn-range
+   bgp listen range 192.168.100.0/23 peer-group overlay peer-filter leaf-asn-range
+   neighbor underlay peer group
+   neighbor underlay send-community
+   neighbor overlay peer group
+   neighbor overlay next-hop-unchanged
+   neighbor overlay send-community
+   neighbor overlay update-source lo0
+   neighbor overlay ebgp-multihop 3
+   redistribute connected route-map allow-loopbacks
+   address-family ipv4
+      neighbor underlay activate
+   address-family evpn
+      neighbor overlay activate

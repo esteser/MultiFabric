@@ -1,0 +1,18 @@
+feature interface-vlan
+!
+vlan 3900
+  name mlag_bgp_peer
+!
+interface vlan3900
+  description mlag_bgp_peer
+  ip address {{ inventory_hostname_short | mlag_address('local', 'bgp') }}/31
+  no shutdown
+!
+router bgp {{ bgp.as_number }}
+  template peer mlag
+    remote-as {{ bgp.as_number }}
+    address-family ipv4 unicast
+      send-community
+      send-community extended
+  neighbor {{ inventory_hostname_short | mlag_address('remote', 'bgp') }}
+    inherit peer mlag

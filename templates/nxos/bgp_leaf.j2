@@ -1,0 +1,35 @@
+feature lldp
+feature bgp
+feature nv overlay
+feature vn-segment-vlan-based
+nv overlay evpn
+router bgp {{ bgp.as_number }}
+  router-id {{ bgp.router_id }}
+  log-neighbor-changes
+  address-family ipv4 unicast
+    redistribute direct route-map allow-loopbacks
+    maximum-paths 4
+  address-family l2vpn evpn
+    maximum-paths 4
+    allow-vni-in-ethertag
+  template peer underlay
+    remote-as 64500.0
+    address-family ipv4 unicast
+      send-community
+      send-community extended
+  template peer overlay
+    remote-as 64500.0
+    update-source loopback0
+    ebgp-multihop 3
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+  {% for neighbor in bgp.neighbors -%}
+  neighbor {{ neighbor }}
+    inherit peer underlay
+  {% endfor -%}
+  {% for neighbor in bgp.neighbors -%}
+  neighbor {{ bgp.neighbors[neighbor].loopback }}
+    inherit peer overlay
+  {% endfor %}
+

@@ -1,0 +1,29 @@
+vlan 4094
+   name mlag_peer
+   trunk group mlag_peer
+!
+interface Ethernet19
+   description mlag_peer1
+   channel-group 1 mode active
+!
+interface Ethernet20
+   description mlag_peer2
+   channel-group 1 mode active
+!
+interface Port-Channel1
+   description mlag_peer
+   switchport mode trunk
+   switchport trunk group mlag_peer
+!
+interface Vlan4094
+   description mlag_peer
+   no autostate
+   ip address {{ inventory_hostname_short | mlag_address('local', 'mlag') }}/31
+!
+no spanning-tree vlan-id 4094
+!
+mlag configuration
+   domain-id mlag
+   local-interface Vlan4094
+   peer-address {{ inventory_hostname_short | mlag_address('remote', 'mlag') }}
+   peer-link Port-Channel1

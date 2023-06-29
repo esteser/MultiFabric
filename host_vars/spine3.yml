@@ -1,0 +1,48 @@
+---
+interfaces:
+  Loopback0:
+    address: '192.168.103.3/32'
+    description: 'evpn_peer'
+  Ethernet1:
+    address: '10.10.13.0/31'
+    description: 'leaf1'
+  Ethernet2:
+    address: '10.10.13.2/31'
+    description: 'leaf2'
+  Ethernet3:
+    address: '10.10.13.4/31'
+    description: 'leaf3'
+  Ethernet4:
+    address: '10.10.13.6/31'
+    description: 'leaf4'
+  Ethernet5:
+    address: '10.10.13.8/31'
+    description: 'leaf5'
+  Ethernet6:
+    address: '10.10.13.10/31'
+    description: 'leaf6'
+bgp:
+  as_number: '64500.0'
+  router_id: '192.168.103.3'
+  neighbors:
+    10.10.13.1:
+      remote_as: '64500.1'
+      loopback: '192.168.100.1'
+    10.10.13.3:
+      remote_as: '64500.2'
+      loopback: '192.168.100.2'
+    10.10.13.5:
+      remote_as: '64500.3'
+      send-community: true
+      loopback: '192.168.100.3'
+    10.10.13.7:
+      remote_as: '64500.4'
+      loopback: '192.168.100.4'
+    10.10.13.9:
+      remote_as: '64500.5'
+      send-community: true
+      loopback: '192.168.100.5'
+    10.10.13.11:
+      remote_as: '64500.5'
+      loopback: '192.168.100.6'
+mlag: False

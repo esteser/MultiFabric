@@ -1,0 +1,58 @@
+---
+interfaces:
+  Loopback0:
+    address: '192.168.100.5/32'
+    description: 'evpn_peer'
+  Loopback1:
+    address: '192.168.102.5/32'
+    description: 'vtep'
+  Ethernet21:
+    address: '10.10.11.9/31'
+    description: 'spine1'
+  Ethernet22:
+    address: '10.10.12.9/31'
+    description: 'spine2'
+  Ethernet23:
+    address: '10.10.13.9/31'
+    description: 'spine3'
+  Ethernet24:
+    address: '10.10.14.9/31'
+    description: 'spine4'
+bgp:
+  as_number: 64500.5
+  router_id: '192.168.100.5'
+  neighbors:
+    10.10.11.8:
+      remote-as: 64500.0
+      ipv4: true
+      evpn: true
+      send-community: true
+      loopback: '192.168.103.1'
+    10.10.12.8:
+      remote-as: 64500.0
+      ipv4: true
+      evpn: true
+      send-community: true
+      loopback: '192.168.103.2'
+    10.10.13.8:
+      remote-as: 64500.0
+      ipv4: true
+      evpn: true
+      send-community: true
+      loopback: '192.168.103.3'
+    10.10.14.8:
+      remote-as: 64500.0
+      ipv4: true
+      evpn: true
+      send-community: true
+      loopback: '192.168.103.4'
+mlag: True
+vlans:
+  100:
+    vni: 10100
+    name: 'VLAN100-VNI10100'
+    interfaces:
+      - 'Ethernet1'
+    rd: '192.168.100.5:5'
+    export_rt: '100:100'
+    import_rt: '100:100'
