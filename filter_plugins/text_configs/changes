@@ -1,0 +1,9 @@
+router bgp 65401.1003
+neighbor 10.252.252.201
+update-source loopback 1
+neighbor 10.252.252.202
+update-source loopback 1
+neighbor 10.252.252.203
+update-source loopback 1
+neighbor 10.252.252.204
+update-source loopback 1

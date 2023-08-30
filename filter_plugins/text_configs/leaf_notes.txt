@@ -1,0 +1,83 @@
+   ECL03 and ECL04
+   
+   vlan 700
+      rd 10.252.253.3:700
+      route-target both 65401.1:700
+      redistribute learned
+
+no int po 100
+no int po 101
+
+interface Port-Channel100
+   load-interval 30
+   switchport mode trunk
+   switchport trunk allowed vlan 700-706
+   mlag 100
+
+interface Port-Channel101
+   load-interval 30
+   switchport mode trunk
+   switchport trunk allowed vlan 700-706
+   mlag 101
+
+interface Ethernet5
+    description l2|port-channel|ecl09|cpu13|eth2
+    channel-group 100 mode active
+
+interface Ethernet6
+    description l2|port-channel|ecl12|cpu13|eth2
+    channel-group 101 mode active
+
+
+#### VPC #####
+
+interface management
+vrf member management
+ip address 10.252.188.32
+
+vpc domain 10
+peer-switch
+role priority 8192
+peer-keepalive destination 10.252.188.33 source 10.252.188.32
+dely restor 120
+peer-gateway
+auto-recovery
+ipv6 nd synchronize
+ip arp synchronize
+
+####Vritual Peer #######
+
+vpc domain 10
+peer-switch
+role priority 8192
+peer-keepalive destination 10.252.188.33 source 10.252.188.32
+virtual peer-link destination 10.112.228.source 10.112.228.127 dscp 56
+dely restor 120
+peer-gateway
+auto-recovery
+ipv6 nd synchronize
+ip arp synchronize
+
+interface port-channel 10
+description VPC PEER link
+switchport
+switchport mode trunk
+switchport native vlan 10
+switchport trunk allowed 10,2020-2370
+spanning-tree port type network
+service-policy type qos input QOS-TRUST no-state
+vpc peer-link
+
+Interface eth1/7
+switchport
+switchport mode trunkswitchport native vlan 10
+switchport trunk allowed vlan 10, 2020-2370
+channel-group 10 mode active
+no shutdown
+
+Interface eth1/8
+switchport
+switchport mode trunkswitchport native vlan 10
+switchport trunk allowed vlan 10, 2020-2370
+channel-group 10 mode active
+no shutdown
